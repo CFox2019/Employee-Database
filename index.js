@@ -39,6 +39,33 @@ const start = () => {
         });
 };
 
+// function to handle adding departments, roles, or employees
+const addInfo = () => {
+    inquirer
+        .prompt({
+            name:'addDeptRoleEmployee',
+            type: 'list',
+            message: 'What information would you like to add?',
+            choices: [
+                'Departments',
+                'Roles',
+                'Employees',
+                'EXIT'
+            ],
+        })
+        .then((answer) => {
+            if (answer.addDeptRoleEmployee === 'Departments') {
+                addDepts();
+            } else if (answer.addDeptRoleEmployee === 'Roles') {
+                viewRoles();
+            } else if (answer.addDeptRoleEmployee === 'Employees') {
+                updateEmployees();
+            } else {
+                connection.end();
+            }
+        });
+};
+
 connection.connect((err) => {
     if (err) throw err;
     // run the start function after the connection is made to prompt the user
