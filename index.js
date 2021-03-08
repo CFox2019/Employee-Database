@@ -57,11 +57,53 @@ const addInfo = () => {
             if (answer.addDeptRoleEmployee === 'Departments') {
                 addDepts();
             } else if (answer.addDeptRoleEmployee === 'Roles') {
-                viewRoles();
+                addRoles();
             } else if (answer.addDeptRoleEmployee === 'Employees') {
-                updateEmployees();
+                addEmployees();
             } else {
                 connection.end();
+            }
+        });
+};
+
+const viewInfo = () => {
+    inquirer
+        .prompt({
+            name:'viewDeptRoleEmployee',
+            type: 'list',
+            message: 'What information would you like to view?',
+            choices: [
+                'Departments',
+                'Roles',
+                'Employees',
+                'EXIT'
+            ],
+        })
+        .then((answer) => {
+            if (answer.viewDeptRoleEmployee === 'Departments') {
+                viewDepts();
+            } else if (answer.viewDeptRoleEmployee === 'Roles') {
+                viewRoles();
+            } else if (answer.viewDeptRoleEmployee === 'Employees') {
+                viewEmployees();
+            } else {
+                connection.end();
+            }
+        });
+};
+
+const updateInfo = () => {
+    inquirer
+        .prompt({
+            name: 'updateEmployee',
+            type: 'confirm',
+            message: 'Is the employee a manager?'
+        })
+        .then((answer)=> {
+            if (answer.updateEmployee === 'yes') {
+                updateManager();
+            } else if (answer.updateEmployee === 'no') {
+                updateEmployeeRoles();
             }
         });
 };
