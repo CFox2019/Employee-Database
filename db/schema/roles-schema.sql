@@ -1,7 +1,5 @@
 USE department_db;
 
-DROP TABLE roles;
-
 CREATE TABLE IF NOT EXISTS roles(
 	id INT AUTO_INCREMENT NOT NULL,
     title VARCHAR(30) NOT NULL,
