@@ -55,11 +55,11 @@ const addInfo = () => {
         })
         .then((answer) => {
             if (answer.addDeptRoleEmployee === 'Departments') {
-                addDepts();
+                addDept();
             } else if (answer.addDeptRoleEmployee === 'Roles') {
-                addRoles();
+                addRole();
             } else if (answer.addDeptRoleEmployee === 'Employees') {
-                addEmployees();
+                addEmployee();
             } else {
                 connection.end();
             }
@@ -82,11 +82,11 @@ const viewInfo = () => {
         })
         .then((answer) => {
             if (answer.viewDeptRoleEmployee === 'Departments') {
-                viewDepts();
+                viewDept();
             } else if (answer.viewDeptRoleEmployee === 'Roles') {
-                viewRoles();
+                viewRole();
             } else if (answer.viewDeptRoleEmployee === 'Employees') {
-                viewEmployees();
+                viewEmployee();
             } else {
                 connection.end();
             }
@@ -105,13 +105,13 @@ const updateInfo = () => {
             if (answer.updateEmployee === 'yes') {
                 updateManager();
             } else if (answer.updateEmployee === 'no') {
-                updateEmployeeRoles();
+                updateEmployeeRole();
             }
         });
 };
 
 // **** function for adding departments
-const addDepts = () => {
+const addDept = () => {
     inquirer
         .prompt({
             name: 'addDept',
@@ -136,7 +136,7 @@ const addDepts = () => {
                     })
                     .then((answer) => {
                         if (answer.addDeptOrExit === 'yes') {
-                            addDepts();
+                            addDept();
                         } else {
                             connection.end();
                         }
@@ -147,10 +147,10 @@ const addDepts = () => {
 };
 
 // **** function for adding roles
-const addRoles = () => {
+const addRole = () => {
     inquirer
         .prompt({
-            name: 'addRoles',
+            name: 'addRole',
             type: 'input',
             message: 'What role would you like to add?'
         })
@@ -172,7 +172,7 @@ const addRoles = () => {
                     })
                     .then((answer) => {
                         if (answer.addRoleOrExit === 'yes') {
-                            addRoles();
+                            addRole();
                         } else {
                             connection.end();
                         }
@@ -183,7 +183,7 @@ const addRoles = () => {
 };
 
 // **** function for adding employees
-const addEmployees = () => {
+const addEmployee = () => {
     inquirer
         .prompt(
             {
@@ -215,7 +215,7 @@ const addEmployees = () => {
                     })
                     .then((answer) => {
                         if (answer.addEmployeeOrExit === 'yes') {
-                            addEmployees();
+                            addEmployee();
                         } else {
                             connection.end();
                         }
@@ -224,6 +224,31 @@ const addEmployees = () => {
             )
         })
 };
+
+// *** viewDepts function should display all departments that have been entered
+const viewDept = () => {
+
+};
+
+// *** viewRoles function should display all roles
+const viewRole = () => {
+
+};
+
+// *** viewEmployees function should display all employees with their info
+const viewEmployee = () => {
+
+};
+
+// *** updateManager function allows the employee managers to be updated
+const updateManager = () => {
+
+}
+
+// *** updateEmployees function allows the employees role to be entered
+const updateEmployeeRole = () => {
+
+}
 
 connection.connect((err) => {
     if (err) throw err;
