@@ -66,6 +66,7 @@ const addInfo = () => {
         });
 };
 
+// function to handle viewing departments, roles, or employees
 const viewInfo = () => {
     inquirer
         .prompt({
@@ -92,6 +93,7 @@ const viewInfo = () => {
         });
 };
 
+// function to handle updating employees
 const updateInfo = () => {
     inquirer
         .prompt({
@@ -106,6 +108,121 @@ const updateInfo = () => {
                 updateEmployeeRoles();
             }
         });
+};
+
+// **** function for adding departments
+const addDepts = () => {
+    inquirer
+        .prompt({
+            name: 'addDept',
+            type: 'input',
+            message: 'What department would you like to add?'
+        })
+        .then((answer) => {
+            // when finished prompting, insert the department name into the db with the text input
+            connection.query(
+                'INSERT INTO departments SET ?',
+                {
+
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('Your department was added successfully!')
+                    // prompt the user for if they want to add another department or exit
+                    .then({
+                        name: 'addDeptOrExit',
+                        type: 'confirm',
+                        message: 'Would you like to add another department?'
+                    })
+                    .then((answer) => {
+                        if (answer.addDeptOrExit === 'yes') {
+                            addDepts();
+                        } else {
+                            connection.end();
+                        }
+                    });
+                }
+            )
+        })
+};
+
+// **** function for adding roles
+const addRoles = () => {
+    inquirer
+        .prompt({
+            name: 'addRoles',
+            type: 'input',
+            message: 'What role would you like to add?'
+        })
+        .then((answer) => {
+            // when finished prompting, insert the role name into the db with the text input
+            connection.query(
+                'INSERT INTO roles SET ?',
+                {
+
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('Your role was added successfully!')
+                    // prompt the user for if they want to add another department or exit
+                    .then({
+                        name: 'addRoleOrExit',
+                        type: 'confirm',
+                        message: 'Would you like to add another role?'
+                    })
+                    .then((answer) => {
+                        if (answer.addRoleOrExit === 'yes') {
+                            addRoles();
+                        } else {
+                            connection.end();
+                        }
+                    });
+                }
+            )
+        })
+};
+
+// **** function for adding employees
+const addEmployees = () => {
+    inquirer
+        .prompt(
+            {
+                name: 'addEmployeesFirstName',
+                type: 'input',
+                message: 'What is the employees first name?'
+            },
+            {
+                name: 'addEmployeesLastName',
+                type: 'input',
+                message: 'What is the employees last name?'
+            }
+        )
+        .then((answer) => {
+            // when finished prompting, insert the employee name into the db with the text input
+            connection.query(
+                'INSERT INTO employees SET ?',
+                {
+
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('Your employee was added successfully!')
+                    // prompt the user for if they want to add another department or exit
+                    .then({
+                        name: 'addEmployeeOrExit',
+                        type: 'confirm',
+                        message: 'Would you like to add another employee?'
+                    })
+                    .then((answer) => {
+                        if (answer.addEmployeeOrExit === 'yes') {
+                            addEmployees();
+                        } else {
+                            connection.end();
+                        }
+                    });
+                }
+            )
+        })
 };
 
 connection.connect((err) => {
