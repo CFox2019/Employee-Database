@@ -4,11 +4,8 @@ const cTable = require('console.table');
 
 const connection = mysql.createConnection({
     host: 'localhost',
-
     port: 3306,
-
     user: 'root',
-
     password: 'tL!TYgh4VHMP',
     database: 'department_DB',
 });
@@ -18,7 +15,7 @@ const start = () => {
         .prompt({
             name:'addViewOrUpdate',
             type: 'list',
-            message: 'Would you like to add, view, or update?',
+            message: 'Would you like to add, view, or update information?',
             choices: [
                 'Add departments, roles, employees',
                 'View departments, roles, employees',
@@ -38,6 +35,8 @@ const start = () => {
             }
         });
 };
+
+// Adding Information
 
 // function to handle adding departments, roles, or employees
 const addInfo = () => {
@@ -62,50 +61,6 @@ const addInfo = () => {
                 addEmployee();
             } else {
                 connection.end();
-            }
-        });
-};
-
-// function to handle viewing departments, roles, or employees
-const viewInfo = () => {
-    inquirer
-        .prompt({
-            name:'viewDeptRoleEmployee',
-            type: 'list',
-            message: 'What information would you like to view?',
-            choices: [
-                'Departments',
-                'Roles',
-                'Employees',
-                'EXIT'
-            ],
-        })
-        .then((answer) => {
-            if (answer.viewDeptRoleEmployee === 'Departments') {
-                viewDept();
-            } else if (answer.viewDeptRoleEmployee === 'Roles') {
-                viewRole();
-            } else if (answer.viewDeptRoleEmployee === 'Employees') {
-                viewEmployee();
-            } else {
-                connection.end();
-            }
-        });
-};
-
-// function to handle updating employees
-const updateInfo = () => {
-    inquirer
-        .prompt({
-            name: 'updateEmployee',
-            type: 'confirm',
-            message: 'Is the employee a manager?'
-        })
-        .then((answer)=> {
-            if (answer.updateEmployee === 'yes') {
-                updateManager();
-            } else if (answer.updateEmployee === 'no') {
-                updateEmployeeRole();
             }
         });
 };
@@ -225,6 +180,35 @@ const addEmployee = () => {
         })
 };
 
+// Viewing Information
+
+// function to handle viewing departments, roles, or employees
+const viewInfo = () => {
+    inquirer
+        .prompt({
+            name:'viewDeptRoleEmployee',
+            type: 'list',
+            message: 'What information would you like to view?',
+            choices: [
+                'Departments',
+                'Roles',
+                'Employees',
+                'EXIT'
+            ],
+        })
+        .then((answer) => {
+            if (answer.viewDeptRoleEmployee === 'Departments') {
+                viewDept();
+            } else if (answer.viewDeptRoleEmployee === 'Roles') {
+                viewRole();
+            } else if (answer.viewDeptRoleEmployee === 'Employees') {
+                viewEmployee();
+            } else {
+                connection.end();
+            }
+        });
+};
+
 // *** viewDepts function should display all departments that have been entered
 const viewDept = () => {
 
@@ -238,6 +222,26 @@ const viewRole = () => {
 // *** viewEmployees function should display all employees with their info
 const viewEmployee = () => {
 
+};
+
+
+// Updating employee roles
+
+// function to handle updating employees
+const updateInfo = () => {
+    inquirer
+        .prompt({
+            name: 'updateEmployee',
+            type: 'confirm',
+            message: 'Is the employee a manager?'
+        })
+        .then((answer)=> {
+            if (answer.updateEmployee === 'yes') {
+                updateManager();
+            } else if (answer.updateEmployee === 'no') {
+                updateEmployeeRole();
+            }
+        });
 };
 
 // *** updateManager function allows the employee managers to be updated
