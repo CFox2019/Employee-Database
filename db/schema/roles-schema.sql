@@ -1,4 +1,4 @@
-USE department_db;
+USE employee_db;
 
 CREATE TABLE IF NOT EXISTS roles(
 	id INT AUTO_INCREMENT NOT NULL,
