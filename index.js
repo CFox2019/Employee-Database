@@ -45,7 +45,6 @@ const beginQuestions = () => {
             ],
         })
         .then((answer) => {
-            // based on answers, call the function
             if (answer.toDo === 'View All Employees') {
                 viewAllEmployees();
             } else if (answer.toDo === 'View All Employees By Department') {
@@ -82,7 +81,6 @@ const viewAllEmployees = () => {
         if (result.length === 0) {
             console.log('There are no employees!')
         } else {
-            // console.log(result);
             console.table(result);
         }
         beginQuestions();
@@ -91,43 +89,83 @@ const viewAllEmployees = () => {
 };
 
 const viewEmployeeDept = () => {
-    inquirer
-        .prompt(
-
+    query('SELECT * FROM departments')
+    .then((departments) => {
+        return inquirer
+            .prompt({
+                name: 'deptId',
+                type: 'list',
+                message: 'What employee department would you like to view?',
+                choices: departments.map((dept) => {
+                    return {
+                        name: dept.department_name,
+                        value: dept.id
+                    }
+                }),
+            })
+    })
+    .then((answer) => {
+        return query(
+            'SELECT employees.id, employees.first_name, employees.last_name, manager.id as manager_id, manager.first_name as manager_first_name, manager.last_name as manager_last_name, roles.id as role_id, roles.title as title, departments.id as dept_id, departments.department_name as department ' +
+            'FROM employees ' +
+            'LEFT JOIN employees as manager ON manager.id = employees.manager_id ' +
+            'INNER JOIN roles ON roles.id = employees.role_id ' +
+            'INNER JOIN departments ON departments.id = roles.department_id ' +
+            'WHERE departments.id = ?',
+            [answer.deptId]
         )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
-
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    beginQuestions();
-                }
-            );
-        });
+    })
+    .then((result) => {
+        console.log('')
+        if (result.length === 0) {
+            console.log('There are no employees!')
+        } else {
+            console.table(result);
+        }
+        console.log('')
+        beginQuestions();
+    })
+    .catch((err) => console.log(err));
 };
 
 const viewEmployeeManager = () => {
-    inquirer
-        .prompt(
-
+    query('SELECT * FROM employees')
+    .then((employees) => {
+        return inquirer
+            .prompt({
+                name: 'managerId',
+                type: 'list',
+                message: 'Choose a manager',
+                choices: employees.map((employee) => {
+                    return {
+                        name: `${employee.first_name} ${employee.last_name}`,
+                        value: employee.id
+                    }
+                }),
+            })
+    })
+    .then((answer) => {
+        return query(
+            'SELECT employees.id, employees.first_name, employees.last_name, manager.id as manager_id, manager.first_name as manager_first_name, manager.last_name as manager_last_name, roles.id as role_id, roles.title as title, departments.id as dept_id, departments.department_name as department ' +
+            'FROM employees ' +
+            'LEFT JOIN employees as manager ON manager.id = employees.manager_id ' +
+            'INNER JOIN roles ON roles.id = employees.role_id ' +
+            'INNER JOIN departments ON departments.id = roles.department_id ' +
+            'WHERE manager.id = ?',
+            [answer.managerId]
         )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
-
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    beginQuestions();
-                }
-            );
-        });
+    })
+    .then((result) => {
+        console.log('')
+        if (result.length === 0) {
+            console.log('There are no employees!')
+        } else {
+            console.table(result);
+        }
+        console.log('')
+        beginQuestions();
+    })
+    .catch((err) => console.log(err));
 };
 
 const addEmployee = () => {
@@ -151,8 +189,7 @@ const addEmployee = () => {
                     name: 'employeeRole',
                     type: 'list',
                     message: 'What is the employee\'s role?',
-                    // list all role choices that have been added to db
-                    choices: result[1].map((role) => { 
+                    choices: result[1].map((role) => {
                         return {
                             name: role.title,
                             value: role.id
@@ -164,7 +201,7 @@ const addEmployee = () => {
                     type: 'list',
                     message: 'Who is the employee\'s manager?',
                     when: result[0].length > 0,
-                    choices: result[0].map((employee) => { 
+                    choices: result[0].map((employee) => {
                         return {
                             name: `${employee.first_name} ${employee.last_name}`,
                             value: employee.id
@@ -184,191 +221,185 @@ const addEmployee = () => {
             }
         )
     })
+    .then(() => beginQuestions())
+    .catch((err) => console.log(err));
+};
+
+const removeEmployee = () => {
+    query('SELECT * FROM employees')
+    .then((employees) => {
+        return inquirer
+            .prompt({
+                name: 'employeeId',
+                type: 'list',
+                message: 'Which employee would you like to remove?',
+                choices: employees.map((employee) => {
+                    return {
+                        name: `${employee.first_name} ${employee.last_name}`,
+                        value: employee.id
+                    }
+                }),
+            })
+    })
+    .then((answer) => query('DELETE FROM employees WHERE employees.id = ?', [answer.employeeId]))
+    .then(() => beginQuestions())
+    .catch((err) => console.log(err));
+};
+
+const updateEmployeeRole = () => {
+    Promise.all([
+        query('SELECT * FROM employees'),
+        query('SELECT * FROM roles')
+    ])
     .then((result) => {
+        return inquirer
+            .prompt([
+                {
+                    name: 'employeeId',
+                    type: 'list',
+                    message: 'Which employee would you like to update?',
+                    choices: result[0].map((employee) => {
+                        return {
+                            name: `${employee.first_name} ${employee.last_name}`,
+                            value: employee.id
+                        }
+                    }),
+                },
+                {
+                    name: 'roleId',
+                    type: 'list',
+                    message: 'What is the employees new role?',
+                    choices: result[1].map((role) => {
+                        return {
+                            name: role.title,
+                            value: role.id
+                        }
+                    }),
+                }
+            ])
+    })
+    .then((answer) => query('UPDATE employees SET ? WHERE employees.id = ?', [
+        { role_id: answer.roleId },
+        answer.employeeId
+    ]))
+    .then(() => beginQuestions())
+    .catch((err) => console.log(err));
+};
+
+const updateEmployeeManager = () => {
+    query('SELECT * FROM employees')
+    .then((employees) => {
+        const choices = employees.map((employee) => {
+            return {
+                name: `${employee.first_name} ${employee.last_name}`,
+                value: employee.id
+            }
+        })
+        return inquirer
+            .prompt([
+                {
+                    name: 'employeeId',
+                    type: 'list',
+                    message: 'Which employee would you like to update?',
+                    choices: choices,
+                },
+                {
+                    name: 'managerId',
+                    type: 'list',
+                    message: 'Who is the employees new manager?',
+                    choices: choices,
+                }
+            ])
+    })
+    .then((answer) => query('UPDATE employees SET ? WHERE employees.id = ?', [
+        { manager_id: answer.managerId },
+        answer.employeeId
+    ]))
+    .then(() => beginQuestions())
+    .catch((err) => console.log(err));
+};
+
+const viewAllRoles = () => {
+    query(
+        'SELECT roles.id as role_id, roles.title as title, departments.id as dept_id, departments.department_name as department ' +
+        'FROM roles ' +
+        'INNER JOIN departments ON departments.id = roles.department_id'
+    )
+    .then((result) => {
+        if (result.length === 0) {
+            console.log('There are no employees!')
+        } else {
+            console.table(result);
+        }
         beginQuestions();
     })
     .catch((err) => console.log(err));
 };
 
-const removeEmployee = () => {
-    inquirer
-        .prompt({
-            name: 'removeEmployee',
-            type: 'list',
-            message: 'Which employee would you like to remove?',
-            // list all employees
-            choices: [
-
-            ]
-        })
-        .then((answer) => {
-            connection.query(
-                'DELETE FROM employee WHERE ?',
-                {
-
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    beginQuestions();
-                }
-            );
-        });
-};
-
-const updateEmployeeRole = () => {
-    inquirer
-        .prompt([
-            {
-                name: 'currentRole',
-                type: 'list',
-                message: 'what is the employee\'s current role?',
-                // list of all roles in db
-                choices: [
-
-                ],
-            },
-            {
-                name: 'updatedRole',
-                type: 'list',
-                message: 'What would you like the employee\'s role to be updated to?',
-                // list of all roles in db
-                choices: [
-
-                ],
-            },
-        ]
-
-        )
-        .then((answer) => {
-            connection.query(
-                'UPDATE role WHERE ?',
-                {
-
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    beginQuestions();
-                }
-            );
-        });
-};
-
-const updateEmployeeManager = () => {
-    inquirer
-        .prompt([
-            {
-                name: 'selectEmployee',
-                type: 'list',
-                message: 'Which employee\'s manager do you want to update?',
-                // List of current employees
-                choices: [
-
-                ],
-            },
-            {
-                name: 'updatedManager',
-                type: 'list',
-                message: 'Which employee would you like to set as a manager for the selected employee?',
-                // list of employees
-                choices: [
-
-                ],
-            },
-        ],
-
-        )
-        .then((answer) => {
-            connection.query(
-                'UPDATE ',
-                {
-
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    beginQuestions();
-                }
-            );
-        });
-};
-
-const viewAllRoles = () => {
-    inquirer
-        .prompt(
-
-        )
-        .then((answer) => {
-            connection.query(
-                'SELECT * FROM role',
-                {
-
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    beginQuestions();
-                }
-            );
-        });
-};
-
 const addRole = () => {
-    inquirer
-        .prompt({
-            name: 'addRole',
-            type: 'input',
-            message: 'What role would you like to add?',
+    query('SELECT * FROM departments')
+    .then((departments) => {
+        const choices = departments.map((dept) => {
+            return {
+                name: dept.department_name,
+                value: dept.id
+            }
         })
-        .then((answer) => {
-            connection.query(
-                'INSERT INTO role SET ?',
+        return inquirer
+            .prompt([
                 {
-                    role: answer.addRole,
+                    name: 'roleTitle',
+                    type: 'input',
+                    message: 'What is the title of the role?'
                 },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    beginQuestions();
+                {
+                    name: 'roleSalary',
+                    type: 'input',
+                    message: 'What is the salary for this role?'
+                },
+                {
+                    name: 'deptId',
+                    type: 'list',
+                    message: 'Which department does the role belong to?',
+                    choices: choices
                 }
-            );
-        });
+            ])
+    })
+    .then((answer) => query('INSERT INTO roles SET ?', {
+        title: answer.roleTitle,
+        salary: answer.roleSalary,
+        department_id: answer.deptId
+    }))
+    .then(() => beginQuestions())
+    .catch((err) => console.log(err));
 };
 
 const removeRole = () => {
-    inquirer
-        .prompt({
-            name: 'removeRole',
-            type: 'list',
-            message: 'Which role would you like to remove?',
-            // List all existing roles
-            choices: [
-
-            ],
-        }
-
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
-
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    beginQuestions();
-                }
-            );
-        });
+    query('SELECT * FROM roles')
+    .then((roles) => {
+        return inquirer
+            .prompt({
+                name: 'roleId',
+                type: 'list',
+                message: 'Which role would you like to remove?',
+                choices: roles.map((role) => {
+                    return {
+                        name: role.title,
+                        value: role.id
+                    }
+                }),
+            })
+    })
+    .then((answer) => query('DELETE FROM roles WHERE roles.id = ?', [answer.roleId]))
+    .then(() => beginQuestions())
+    .catch((err) => console.log(err));
 };
 
 connection.connect((err) => {
-        if (err) throw err;
-        // run the beginQuestions function after the connection is made to prompt the user
-        beginQuestions();
-    });
+    if (err) throw err;
+    // run the beginQuestions function after the connection is made to prompt the user
+    beginQuestions();
+});
 
 
 
