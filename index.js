@@ -56,205 +56,231 @@ const start = () => {
         });
 };
 
-const viewAllEmployees = () => {
-    inquirer
-        .prompt(
+// const viewAllEmployees = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
-const viewEmployeeDept = () => {
-    inquirer
-        .prompt(
+// const viewEmployeeDept = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
-const viewEmployeeManager = () => {
-    inquirer
-        .prompt(
+// const viewEmployeeManager = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
 const addEmployee = () => {
     inquirer
-        .prompt(
+        .prompt([
+            {
+                name: 'firstName',
+                type: 'input',
+                message: 'What is the employee\'s first name?',
+            },
+            {
+                name: 'lastName',
+                type: 'input',
+                message: 'What is the employee\'s last name?',
+            },
+            {
+                name: 'employeeRole',
+                type: 'list',
+                message: 'What is the employee\'s role?',
+            },
+            {
+                name: 'employeeManager',
+                type: 'list',
+                message: 'Who is the employee\'s manager?',
+                // list all employees plus a none option
+                choices: [
 
-        )
+                ],
+            },
+        ])
         .then((answer) => {
             connection.query(
-                '',
+                'INSERT INTO employee SET',
                 {
-
+                    first_Name: answer.firstName,
+                    last_name: answer.lastName,
+                    role: answer.employee_role,
+                    manager: answer.employeeManager,
                 },
                 (err) => {
                     if (err) throw err;
-                    console.log('');
+                    console.log('The employee was created successfully!');
                     start();
                 }
             );
         });
 };
 
-const removeEmployee = () => {
-    inquirer
-        .prompt(
+// const removeEmployee = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
-const updateEmployeeRole = () => {
-    inquirer
-        .prompt(
+// const updateEmployeeRole = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
-const updateEmployeeManager = () => {
-    inquirer
-        .prompt(
+// const updateEmployeeManager = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
-const viewAllRoles = () => {
-    inquirer
-        .prompt(
+// const viewAllRoles = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
-const addRole = () => {
-    inquirer
-        .prompt(
+// const addRole = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
-const removeRole = () => {
-    inquirer
-        .prompt(
+// const removeRole = () => {
+//     inquirer
+//         .prompt(
 
-        )
-        .then((answer) => {
-            connection.query(
-                '',
-                {
+//         )
+//         .then((answer) => {
+//             connection.query(
+//                 '',
+//                 {
 
-                },
-                (err) => {
-                    if (err) throw err;
-                    console.log('');
-                    start();
-                }
-            );
-        });
-};
+//                 },
+//                 (err) => {
+//                     if (err) throw err;
+//                     console.log('');
+//                     start();
+//                 }
+//             );
+//         });
+// };
 
 connection.connect((err) => {
         if (err) throw err;
