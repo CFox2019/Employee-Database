@@ -133,6 +133,10 @@ const addEmployee = () => {
                 name: 'employeeRole',
                 type: 'list',
                 message: 'What is the employee\'s role?',
+                // list all role choices that have been added to db
+                choices: [
+
+                ],
             },
             {
                 name: 'employeeManager',
@@ -162,125 +166,179 @@ const addEmployee = () => {
         });
 };
 
-// const removeEmployee = () => {
-//     inquirer
-//         .prompt(
+const removeEmployee = () => {
+    inquirer
+        .prompt({
+            name: 'removeEmployee',
+            type: 'list',
+            message: 'Which employee would you like to remove?',
+            // list all employees
+            choices: [
 
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
+            ]
+        })
+        .then((answer) => {
+            connection.query(
+                'DELETE FROM employee WHERE ?',
+                {
 
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('');
+                    start();
+                }
+            );
+        });
+};
 
-// const updateEmployeeRole = () => {
-//     inquirer
-//         .prompt(
+const updateEmployeeRole = () => {
+    inquirer
+        .prompt([
+            {
+                name: 'currentRole',
+                type: 'list',
+                message: 'what is the employee\'s current role?',
+                // list of all roles in db
+                choices: [
 
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
+                ],
+            },
+            {
+                name: 'updatedRole',
+                type: 'list',
+                message: 'What would you like the employee\'s role to be updated to?',
+                // list of all roles in db
+                choices: [
 
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
+                ],
+            },
+        ]
 
-// const updateEmployeeManager = () => {
-//     inquirer
-//         .prompt(
+        )
+        .then((answer) => {
+            connection.query(
+                'UPDATE role WHERE ?',
+                {
 
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('');
+                    start();
+                }
+            );
+        });
+};
 
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
+const updateEmployeeManager = () => {
+    inquirer
+        .prompt([
+            {
+                name: 'selectEmployee',
+                type: 'list',
+                message: 'Which employee\'s manager do you want to update?',
+                // List of current employees
+                choices: [
 
-// const viewAllRoles = () => {
-//     inquirer
-//         .prompt(
+                ],
+            },
+            {
+                name: 'updatedManager',
+                type: 'list',
+                message: 'Which employee would you like to set as a manager for the selected employee?',
+                // list of employees
+                choices: [
 
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
+                ],
+            },
+        ],
 
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
+        )
+        .then((answer) => {
+            connection.query(
+                'UPDATE ',
+                {
 
-// const addRole = () => {
-//     inquirer
-//         .prompt(
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('');
+                    start();
+                }
+            );
+        });
+};
 
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
+const viewAllRoles = () => {
+    inquirer
+        .prompt(
 
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
+        )
+        .then((answer) => {
+            connection.query(
+                'SELECT * FROM role',
+                {
 
-// const removeRole = () => {
-//     inquirer
-//         .prompt(
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('');
+                    start();
+                }
+            );
+        });
+};
 
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
+const addRole = () => {
+    inquirer
+        .prompt({
+            name: 'addRole',
+            type: 'input',
+            message: 'What role would you like to add?',
+        })
+        .then((answer) => {
+            connection.query(
+                'INSERT INTO role SET ?',
+                {
+                    role: answer.addRole,
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('');
+                    start();
+                }
+            );
+        });
+};
 
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
+const removeRole = () => {
+    inquirer
+        .prompt({
+            name: 'removeRole',
+            type: 'list',
+            message: 'Which role would you like to remove?',
+            // List all existing roles
+            choices: [
+
+            ],
+        }
+
+        )
+        .then((answer) => {
+            connection.query(
+                '',
+                {
+
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('');
+                    start();
+                }
+            );
+        });
+};
 
 connection.connect((err) => {
         if (err) throw err;
