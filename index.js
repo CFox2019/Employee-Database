@@ -10,8 +10,22 @@ const connection = mysql.createConnection({
     database: 'employee_DB',
 });
 
+// Database Query Utility for using Promises
+const query = (query, params = null) => {
+    return new Promise((resolve, reject) => {
+        connection.query(query, params, (err, result) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(result)
+            }
+        })
+    })
+}
+
+
 // initial questions
-const start = () => {
+const beginQuestions = () => {
     inquirer
         .prompt({
             name: 'toDo',
@@ -56,114 +70,124 @@ const start = () => {
         });
 };
 
-// const viewAllEmployees = () => {
-//     inquirer
-//         .prompt(
+const viewAllEmployees = () => {
+    query(
+        'SELECT employees.id, employees.first_name, employees.last_name, manager.id as manager_id, manager.first_name as manager_first_name, manager.last_name as manager_last_name, roles.id as role_id, roles.title as title, departments.id as dept_id, departments.department_name as department ' +
+        'FROM employees ' +
+        'LEFT JOIN employees as manager ON manager.id = employees.manager_id ' +
+        'INNER JOIN roles ON roles.id = employees.role_id ' +
+        'INNER JOIN departments ON departments.id = roles.department_id'
+    )
+    .then((result) => {
+        if (result.length === 0) {
+            console.log('There are no employees!')
+        } else {
+            // console.log(result);
+            console.table(result);
+        }
+        beginQuestions();
+    })
+    .catch((err) => console.log(err));
+};
 
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
-
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
-
-// const viewEmployeeDept = () => {
-//     inquirer
-//         .prompt(
-
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
-
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
-
-// const viewEmployeeManager = () => {
-//     inquirer
-//         .prompt(
-
-//         )
-//         .then((answer) => {
-//             connection.query(
-//                 '',
-//                 {
-
-//                 },
-//                 (err) => {
-//                     if (err) throw err;
-//                     console.log('');
-//                     start();
-//                 }
-//             );
-//         });
-// };
-
-const addEmployee = () => {
+const viewEmployeeDept = () => {
     inquirer
-        .prompt([
-            {
-                name: 'firstName',
-                type: 'input',
-                message: 'What is the employee\'s first name?',
-            },
-            {
-                name: 'lastName',
-                type: 'input',
-                message: 'What is the employee\'s last name?',
-            },
-            {
-                name: 'employeeRole',
-                type: 'list',
-                message: 'What is the employee\'s role?',
-                // list all role choices that have been added to db
-                choices: [
+        .prompt(
 
-                ],
-            },
-            {
-                name: 'employeeManager',
-                type: 'list',
-                message: 'Who is the employee\'s manager?',
-                // list all employees plus a none option
-                choices: [
-
-                ],
-            },
-        ])
+        )
         .then((answer) => {
             connection.query(
-                'INSERT INTO employee SET',
+                '',
                 {
-                    first_Name: answer.firstName,
-                    last_name: answer.lastName,
-                    role: answer.employee_role,
-                    manager: answer.employeeManager,
+
                 },
                 (err) => {
                     if (err) throw err;
-                    console.log('The employee was created successfully!');
-                    start();
+                    console.log('');
+                    beginQuestions();
                 }
             );
         });
+};
+
+const viewEmployeeManager = () => {
+    inquirer
+        .prompt(
+
+        )
+        .then((answer) => {
+            connection.query(
+                '',
+                {
+
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('');
+                    beginQuestions();
+                }
+            );
+        });
+};
+
+const addEmployee = () => {
+    Promise.all([
+        query('SELECT * FROM employees'),
+        query('SELECT * FROM roles')
+    ]).then((result) => {
+        return inquirer
+            .prompt([
+                {
+                    name: 'firstName',
+                    type: 'input',
+                    message: 'What is the employee\'s first name?',
+                },
+                {
+                    name: 'lastName',
+                    type: 'input',
+                    message: 'What is the employee\'s last name?',
+                },
+                {
+                    name: 'employeeRole',
+                    type: 'list',
+                    message: 'What is the employee\'s role?',
+                    // list all role choices that have been added to db
+                    choices: result[1].map((role) => { 
+                        return {
+                            name: role.title,
+                            value: role.id
+                        }
+                    }),
+                },
+                {
+                    name: 'employeeManager',
+                    type: 'list',
+                    message: 'Who is the employee\'s manager?',
+                    when: result[0].length > 0,
+                    choices: result[0].map((employee) => { 
+                        return {
+                            name: `${employee.first_name} ${employee.last_name}`,
+                            value: employee.id
+                        }
+                    }),
+                },
+            ])
+    })
+    .then((answer) => {
+        return query(
+            'INSERT INTO employees SET ?',
+            {
+                first_name: answer.firstName,
+                last_name: answer.lastName,
+                role_id: answer.employeeRole,
+                manager_id: answer.employeeManager
+            }
+        )
+    })
+    .then((result) => {
+        beginQuestions();
+    })
+    .catch((err) => console.log(err));
 };
 
 const removeEmployee = () => {
@@ -186,7 +210,7 @@ const removeEmployee = () => {
                 (err) => {
                     if (err) throw err;
                     console.log('');
-                    start();
+                    beginQuestions();
                 }
             );
         });
@@ -225,7 +249,7 @@ const updateEmployeeRole = () => {
                 (err) => {
                     if (err) throw err;
                     console.log('');
-                    start();
+                    beginQuestions();
                 }
             );
         });
@@ -264,7 +288,7 @@ const updateEmployeeManager = () => {
                 (err) => {
                     if (err) throw err;
                     console.log('');
-                    start();
+                    beginQuestions();
                 }
             );
         });
@@ -284,7 +308,7 @@ const viewAllRoles = () => {
                 (err) => {
                     if (err) throw err;
                     console.log('');
-                    start();
+                    beginQuestions();
                 }
             );
         });
@@ -306,7 +330,7 @@ const addRole = () => {
                 (err) => {
                     if (err) throw err;
                     console.log('');
-                    start();
+                    beginQuestions();
                 }
             );
         });
@@ -334,7 +358,7 @@ const removeRole = () => {
                 (err) => {
                     if (err) throw err;
                     console.log('');
-                    start();
+                    beginQuestions();
                 }
             );
         });
@@ -342,8 +366,8 @@ const removeRole = () => {
 
 connection.connect((err) => {
         if (err) throw err;
-        // run the start function after the connection is made to prompt the user
-        start();
+        // run the beginQuestions function after the connection is made to prompt the user
+        beginQuestions();
     });
 
 
@@ -390,7 +414,7 @@ connection.connect((err) => {
 //     database: 'employee_DB',
 // });
 
-// const start = () => {
+// const beginQuestions = () => {
 //     inquirer
 //         .prompt({
 //             name: 'addViewOrUpdate',
@@ -478,7 +502,7 @@ connection.connect((err) => {
 //     }
 //     connection.query('SELECT * FROM departments', (err, result) => {
 //         console.table(result);
-//         start();
+//         beginQuestions();
 //     })
 // }
 
@@ -676,6 +700,6 @@ connection.connect((err) => {
 
 // connection.connect((err) => {
 //     if (err) throw err;
-//     // run the start function after the connection is made to prompt the user
-//     start();
+//     // run the beginQuestions function after the connection is made to prompt the user
+//     beginQuestions();
 // });
