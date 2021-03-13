@@ -1,22 +1,22 @@
 {
   "name": "02-Homework",
   "version": "1.0.0",
-  "description": "Employee Tracker",
+  "description": "Employee Database",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CFox2019/Employee-Tracker.git"
+    "url": "git+https://github.com/CFox2019/Employee-Database.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/CFox2019/Employee-Tracker/issues"
+    "url": "https://github.com/CFox2019/Employee-Database/issues"
   },
-  "homepage": "https://github.com/CFox2019/Employee-Tracker#readme",
+  "homepage": "https://github.com/CFox2019/Employee-Database#readme",
   "dependencies": {
     "console.table": "^0.10.0",
     "inquirer": "^8.0.0",
