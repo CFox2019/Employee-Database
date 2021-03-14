@@ -40,7 +40,8 @@ const beginQuestions = () => {
                 'Update Employee Manager',
                 'View All Roles',
                 'Add Role',
-                'Remove Role'
+                'Remove Role',
+                'EXIT'
             ],
         })
         .then((answer) => {
@@ -64,6 +65,8 @@ const beginQuestions = () => {
                 addRole();
             } else if (answer.toDo === 'Remove Role') {
                 removeRole();
+            } else if (answer.toDo === 'EXIT') {
+                connection.end();
             }
         });
 };
