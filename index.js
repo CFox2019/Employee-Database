@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
-const cTable = require('console.table');
+require('console.table');
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -77,11 +77,13 @@ const viewAllEmployees = () => {
         'INNER JOIN departments ON departments.id = roles.department_id'
     )
     .then((result) => {
+        console.log('');
         if (result.length === 0) {
             console.log('There are no employees!')
         } else {
             console.table(result);
         }
+        console.log('');
         beginQuestions();
     })
     .catch((err) => console.log(err));
@@ -172,6 +174,12 @@ const addEmployee = () => {
         query('SELECT * FROM employees'),
         query('SELECT * FROM roles')
     ]).then((result) => {
+        let employees = result[0]
+        employees.push({
+            id: null,
+            first_name: 'None',
+            last_name: ''
+        })
         return inquirer
             .prompt([
                 {
@@ -199,8 +207,8 @@ const addEmployee = () => {
                     name: 'employeeManager',
                     type: 'list',
                     message: 'Who is the employee\'s manager?',
-                    when: result[0].length > 0,
-                    choices: result[0].map((employee) => {
+                    when: employees.length > 0,
+                    choices: employees.map((employee) => {
                         return {
                             name: `${employee.first_name} ${employee.last_name}`,
                             value: employee.id
@@ -325,11 +333,13 @@ const viewAllRoles = () => {
         'INNER JOIN departments ON departments.id = roles.department_id'
     )
     .then((result) => {
+        console.log('');
         if (result.length === 0) {
             console.log('There are no employees!')
         } else {
             console.table(result);
         }
+        console.log('');
         beginQuestions();
     })
     .catch((err) => console.log(err));
