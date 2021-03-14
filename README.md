@@ -21,6 +21,8 @@ run 'npm i' in the command line
 ## Usage
 run 'node index.js' to begin answering questions. You can view the database tables by various categories, as well as add, remove, and update employee information.
 
+![Employee Database](./Assets/Employee-Database.gif)
+
 ## Contributing
 If you'd like to contribute to this project, start by forking the repository to your personal GitHub account. From there, make your changes and then open a Pull Request in this repository against the branch in your fork.
 
